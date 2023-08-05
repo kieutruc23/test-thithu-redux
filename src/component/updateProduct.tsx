@@ -1,10 +1,11 @@
 
 
 import { Button, Form, Input } from 'antd';
-import { useAppDispatch } from '../store/hooks';
-
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { useEffect } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { updateProduct } from '../action/Product';
+
 
 const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
@@ -18,7 +19,20 @@ const UpdateProductComponent = () => {
     const dispatch = useAppDispatch()
     const [form] = Form.useForm()
 
+    const { products } = useAppSelector((state) => state.products)
 
+    const newData = products.find((item: any) => item.id == String(id))
+    console.log(newData)
+    useEffect(() => {
+        if (newData) {
+            form.setFieldsValue({
+                id: newData.id,
+                name: newData.name,
+                price: newData.price// Thay 'fieldName' bằng tên trường form và 'fieldName' trong newData bằng tên trường tương ứng trong đối tượng newData
+                // Thêm các trường form khác tại đây nếu cần
+            });
+        }
+    }, [newData, form]);
     // Đặt giá trị mặc định cho form từ dữ liệu sản phẩm
     const onFinish = (values: any) => {
         console.log(values)
